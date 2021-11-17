@@ -217,7 +217,7 @@ const Logic = {
   },
 
   async refreshIdentities() {
-    const [identities, state, containerOrderStorage, filterListStorage] = await Promise.all([
+    const [identities, state, containerOrderStorage] = await Promise.all([
       browser.contextualIdentities.query({}),
       browser.runtime.sendMessage({
         method: "queryIdentitiesState",
@@ -230,7 +230,6 @@ const Logic = {
 
     const containerOrder =
       containerOrderStorage && containerOrderStorage[CONTAINER_ORDER_STORAGE_KEY];
-    // FIXME: Should be a const as above?
     this._identities = identities
       .filter(await Utils.createIdentityFilter())
       .map((identity) => {
