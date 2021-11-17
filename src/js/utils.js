@@ -135,6 +135,17 @@ const Utils = {
     });
   },
 
+  async createIdentityFilter() {
+    const { filterList } = await browser.storage.local.get("filterList");
+    const patterns = filterList.map((filter) => {
+      return new RegExp(`^${filter.replace("*", ".*")}$`, "i");
+    });
+
+    return (identity) => {
+      return !patterns.some((pattern) => pattern.test(identity.name));
+    };
+  },
+
   async reloadInContainer(url, currentUserContextId, newUserContextId, tabIndex, active) {
     return await browser.runtime.sendMessage({
       method: "reloadInContainer",

@@ -217,7 +217,7 @@ const Logic = {
   },
 
   async refreshIdentities() {
-    const [identities, state, containerOrderStorage] = await Promise.all([
+    const [identities, state, containerOrderStorage, filterListStorage] = await Promise.all([
       browser.contextualIdentities.query({}),
       browser.runtime.sendMessage({
         method: "queryIdentitiesState",
@@ -225,24 +225,28 @@ const Logic = {
           windowId: browser.windows.WINDOW_ID_CURRENT
         }
       }),
-      browser.storage.local.get([CONTAINER_ORDER_STORAGE_KEY])
+      browser.storage.local.get([CONTAINER_ORDER_STORAGE_KEY]),
     ]);
+
     const containerOrder =
       containerOrderStorage && containerOrderStorage[CONTAINER_ORDER_STORAGE_KEY];
-    this._identities = identities.map((identity) => {
-      const stateObject = state[identity.cookieStoreId];
-      if (stateObject) {
-        identity.hasOpenTabs = stateObject.hasOpenTabs;
-        identity.hasHiddenTabs = stateObject.hasHiddenTabs;
-        identity.numberOfHiddenTabs = stateObject.numberOfHiddenTabs;
-        identity.numberOfOpenTabs = stateObject.numberOfOpenTabs;
-        identity.isIsolated = stateObject.isIsolated;
-      }
-      if (containerOrder) {
-        identity.order = containerOrder[identity.cookieStoreId];
-      }
-      return identity;
-    }).sort((i1, i2) => i1.order - i2.order);
+    // FIXME: Should be a const as above?
+    this._identities = identities
+      .filter(await Utils.createIdentityFilter())
+      .map((identity) => {
+        const stateObject = state[identity.cookieStoreId];
+        if (stateObject) {
+          identity.hasOpenTabs = stateObject.hasOpenTabs;
+          identity.hasHiddenTabs = stateObject.hasHiddenTabs;
+          identity.numberOfHiddenTabs = stateObject.numberOfHiddenTabs;
+          identity.numberOfOpenTabs = stateObject.numberOfOpenTabs;
+          identity.isIsolated = stateObject.isIsolated;
+        }
+        if (containerOrder) {
+          identity.order = containerOrder[identity.cookieStoreId];
+        }
+        return identity;
+      }).sort((i1, i2) => i1.order - i2.order);
   },
 
   getPanelSelector(panel) {

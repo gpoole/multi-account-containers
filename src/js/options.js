@@ -25,15 +25,22 @@ async function enableDisableReplaceTab() {
   await browser.storage.local.set({replaceTabEnabled: !!checkbox.checked});
 }
 
+function updateFilterList(event) {
+  const filterList = event.target.value.split(/\s*,\s*/);
+  return browser.storage.local.set({ filterList });
+}
+
 async function setupOptions() {
   const hasPermission = await browser.permissions.contains({permissions: ["bookmarks"]});
   const { syncEnabled } = await browser.storage.local.get("syncEnabled");
   const { replaceTabEnabled } = await browser.storage.local.get("replaceTabEnabled");
+  const { filterList } = await browser.storage.local.get("filterList");
   if (hasPermission) {
     document.querySelector("#bookmarksPermissions").checked = true;
   }
   document.querySelector("#syncCheck").checked = !!syncEnabled;
   document.querySelector("#replaceTabCheck").checked = !!replaceTabEnabled;
+  document.querySelector("#filterList").value = filterList.join(",");
   setupContainerShortcutSelects();
 }
 
@@ -81,6 +88,7 @@ function resetOnboarding() {
 document.addEventListener("DOMContentLoaded", setupOptions);
 document.querySelector("#bookmarksPermissions").addEventListener( "change", requestPermissions);
 document.querySelector("#syncCheck").addEventListener( "change", enableDisableSync);
+document.querySelector("#filterList").addEventListener("change", updateFilterList);
 document.querySelector("#replaceTabCheck").addEventListener( "change", enableDisableReplaceTab);
 document.querySelector("button").addEventListener("click", resetOnboarding);
 

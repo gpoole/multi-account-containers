@@ -345,7 +345,8 @@ async function reconcileIdentities(){
       }
     }
   }
-  const localIdentities = await browser.contextualIdentities.query({});
+  const localIdentities = (await browser.contextualIdentities.query({}))
+    .filter(await Utils.createIdentityFilter());
   const syncIdentitiesRemoveDupes = 
     await sync.storageArea.getIdentities();
   // find any local dupes created on sync storage and delete from sync storage
