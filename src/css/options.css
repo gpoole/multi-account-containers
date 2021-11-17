@@ -27,3 +27,7 @@ label {
     color: rgb(177, 177, 179);
   }
 }
+
+#filterList {
+  width: 100%;
+}
