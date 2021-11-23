@@ -25,22 +25,23 @@ async function enableDisableReplaceTab() {
   await browser.storage.local.set({replaceTabEnabled: !!checkbox.checked});
 }
 
-function updateFilterList(event) {
-  const filterList = event.target.value.split(/\s*,\s*/);
-  return browser.storage.local.set({ filterList });
+function updateIgnoreContainers() {
+  const rawValue = document.querySelector("#ignoreContainers").value;
+  const ignoreContainers = rawValue.split(/\s*,\s*/);
+  return browser.storage.local.set({ ignoreContainers });
 }
 
 async function setupOptions() {
   const hasPermission = await browser.permissions.contains({permissions: ["bookmarks"]});
   const { syncEnabled } = await browser.storage.local.get("syncEnabled");
   const { replaceTabEnabled } = await browser.storage.local.get("replaceTabEnabled");
-  const { filterList } = await browser.storage.local.get("filterList");
+  const { ignoreContainers } = await browser.storage.local.get("ignoreContainers");
   if (hasPermission) {
     document.querySelector("#bookmarksPermissions").checked = true;
   }
   document.querySelector("#syncCheck").checked = !!syncEnabled;
   document.querySelector("#replaceTabCheck").checked = !!replaceTabEnabled;
-  document.querySelector("#filterList").value = filterList.join(",");
+  document.querySelector("#ignoreContainers").value = ignoreContainers.join(",");
   setupContainerShortcutSelects();
 }
 
@@ -85,12 +86,19 @@ function resetOnboarding() {
   browser.storage.local.set({"onboarding-stage": 0});
 }
 
+// Prevents submitting by pressing enter in the text field
+function submitForm (event) {
+  event.preventDefault();
+  updateIgnoreContainers();
+}
+
 document.addEventListener("DOMContentLoaded", setupOptions);
 document.querySelector("#bookmarksPermissions").addEventListener( "change", requestPermissions);
 document.querySelector("#syncCheck").addEventListener( "change", enableDisableSync);
-document.querySelector("#filterList").addEventListener("change", updateFilterList);
+document.querySelector("#ignoreContainers").addEventListener("change", updateIgnoreContainers);
 document.querySelector("#replaceTabCheck").addEventListener( "change", enableDisableReplaceTab);
 document.querySelector("button").addEventListener("click", resetOnboarding);
+document.querySelector("form").addEventListener("submit", submitForm);
 
 for (let i=0; i < NUMBER_OF_KEYBOARD_SHORTCUTS; i++) {
   document.querySelector("#open_container_"+i)

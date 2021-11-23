@@ -136,8 +136,13 @@ const Utils = {
   },
 
   async createIdentityFilter() {
-    const { filterList } = await browser.storage.local.get("filterList");
-    const patterns = filterList.map((filter) => {
+    const { ignoreContainers } = await browser.storage.local.get("ignoreContainers");
+
+    if (!ignoreContainers) {
+      return () => true;
+    }
+
+    const patterns = ignoreContainers.map((filter) => {
       return new RegExp(`^${filter.replace("*", ".*")}$`, "i");
     });
 
