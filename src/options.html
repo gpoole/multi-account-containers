@@ -48,16 +48,29 @@
         <span class="bold" data-i18n-message-id="enableSync"></span>
       </label>
       <p><em data-i18n-message-id="enableSyncDescription"></em></p>
+
     </div>
 
-    <h3 data-i18n-message-id="ignoreContainers"></h3>
-
-    <div class="settings-group">
-      <label>
-        <input type="text" id="ignoreContainers" placeholder="tmp*, personal">
-      </label>
-      <p><em data-i18n-message-id="ignoreContainersDescription"></em></p>
-    </div>
+    <!--
+        FIXME: these labels are currently hard-coded due to
+        https://github.com/mozilla/multi-account-containers/issues/2512
+      -->
+    <label class="text-input">
+      <!-- <span class="bold" data-i18n-message-id="ignoreContainers"></span> -->
+      <span class="label">
+        Exclude containers
+      </span>
+      <input type="text" id="ignoreContainers" placeholder="tmp*, personal">
+    </label>
+    <p>
+      <!-- <em data-i18n-message-id="ignoreContainersDescription"> -->
+      <em>
+        A list of container names that will be excluded from sync.
+        Wildcards are supported by using "*".
+        For example, "tmp*" will exclude containers created by Temporary Containers.
+        Separate multiple names with a comma.
+      </em>
+    </p>
 
     <h3 data-i18n-message-id="tabBehavior"></h3>
 

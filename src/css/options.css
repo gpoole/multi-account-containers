@@ -48,6 +48,16 @@ button {
   margin-inline: 0 auto;
 }
 
+.text-input {
+  display: block;
+}
+
+.text-input .label {
+  margin-block: 4px 8px;
+  display: block;
+  font-weight: bold;
+}
+
 .keyboard-shortcut {
   display: flex;
   flex-direction: row;
