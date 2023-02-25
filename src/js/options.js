@@ -74,7 +74,7 @@ async function setupOptions() {
   document.querySelector("#syncCheck").checked = !!syncEnabled;
   document.querySelector("#replaceTabCheck").checked = !!replaceTabEnabled;
   document.querySelector("#changeTheme").selectedIndex = currentThemeId;
-  document.querySelector("#ignoreContainers").value = ignoreContainers.join(",");
+  document.querySelector("#ignoreContainers").value = ignoreContainers ? ignoreContainers.join(",") : '';
   setupContainerShortcutSelects();
 }
 
