@@ -11,7 +11,7 @@ git submodule init || die
 git submodule update --remote --depth 1 src/_locales || die
 
 print Y "Installing dependencies..."
-npm install || die
+npm install --legacy-peer-deps || die
 
 print Y "Running tests..."
 npm test
@@ -23,4 +23,4 @@ if [[ $# -gt 0 ]]; then
   EXTRA_PARAMS="--filename $1"
 fi
 
-$(npm bin)/web-ext build --overwrite-dest $EXTRA_PARAMS || die
+npx web-ext build --overwrite-dest $EXTRA_PARAMS || die

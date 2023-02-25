@@ -5,6 +5,11 @@ const MozillaVPN = {
     const mozillaVpnInstalled = await browser.runtime.sendMessage({ method: "MozillaVPN_getInstallationStatus" });
     this.handleStatusIndicatorsInContainerLists(mozillaVpnInstalled);
 
+    const permissionsEnabled = await this.bothPermissionsEnabled();
+    if (!permissionsEnabled) {
+      return;
+    }
+
     const proxies = await this.getProxies(identities);
     if (Object.keys(proxies).length === 0) {
       return;
@@ -29,11 +34,8 @@ const MozillaVPN = {
         }
         if (!mozillaVpnConnected && proxy.mozProxyEnabled) {
           flag.classList.add("proxy-unavailable");
-          const tooltip = el.querySelector(".tooltip.proxy-unavailable");
-          if (tooltip) {
-            tooltip.textContent = tooltipProxyWarning;
-          }
           const menuItemName = el.querySelector(".menu-item-name");
+          menuItemName.setAttribute("title", tooltipProxyWarning);
           if (menuItemName) {
             el.querySelector(".menu-item-name").dataset.mozProxyWarning = "proxy-unavailable";
           }
@@ -63,14 +65,11 @@ const MozillaVPN = {
     const mozillaVpnConnected = await browser.runtime.sendMessage({ method: "MozillaVPN_getConnectionStatus" });
     const connectionStatusStringId = mozillaVpnConnected ? "moz-vpn-connected" : "moz-vpn-disconnected";
     const connectionStatusLocalizedString = browser.i18n.getMessage(connectionStatusStringId);
+    const connectionStatusTooltip = document.querySelector(".vpn-status-container-list");
+    connectionStatusTooltip.setAttribute("title", connectionStatusLocalizedString);
 
     statusIconEls.forEach(el => {
       el.style.backgroundImage = mozillaVpnConnected ? connectedIndicatorSrc : disconnectedIndicatorSrc;
-      if (el.querySelector(".tooltip")) {
-        el.querySelector(".tooltip").textContent = connectionStatusLocalizedString;
-      } else {
-        el.textContent = connectionStatusLocalizedString;
-      }
     });
   },
 
@@ -154,6 +153,10 @@ const MozillaVPN = {
       cityName: undefined,
       mozProxyEnabled: undefined
     };
+  },
+
+  async bothPermissionsEnabled() {
+    return await browser.permissions.contains({ permissions: ["proxy", "nativeMessaging"] });
   },
 
 
@@ -245,7 +248,7 @@ const MozillaVPN = {
       randomInteger = (randomInteger - server.weight);
     }
     return nextServer;
-  }
+  },
 };
 
 window.MozillaVPN = MozillaVPN;

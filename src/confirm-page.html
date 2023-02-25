@@ -3,6 +3,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <title data-i18n-message-id="confirmNavigationTitle"></title>
   <link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="chrome://browser/skin/aboutNetError.css" type="text/css" media="all" />
+  <link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="chrome://global/skin/aboutNetError.css" type="text/css" media="all" />
   <script type="text/javascript" src="./js/i18n.js"></script>
   <link rel="stylesheet" href="/css/confirm-page.css" />
 </head>
@@ -23,8 +24,21 @@
       </label>
       <br />
       <div class="button-container">
-        <button id="deny" class="button" data-message-id="openInContainer" data-message-arg="current-container-name"></button>
-        <button id="confirm" class="button primary" data-message-id="openInContainer" data-message-arg="container-name"></button>
+        <button id="deny"
+                class="button"
+                data-message-id="openInContainer"
+                data-message-arg="current-container-name">
+        </button>
+        <button id="deny-no-container"
+                class="button"
+                data-message-id="openInNoContainer">
+        </button>
+        <button id="confirm"
+                class="button primary"
+                autofocus
+                data-message-id="openInContainer"
+                data-message-arg="container-name">
+        </button>
       </div>
     </form>
   </main>

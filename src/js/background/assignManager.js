@@ -102,6 +102,7 @@ window.assignManager = {
     async deleteContainer(userContextId) {
       const sitesByContainer = await this.getAssignedSites(userContextId);
       this.area.remove(Object.keys(sitesByContainer));
+      identityState.storageArea.remove(backgroundLogic.cookieStoreId(userContextId));
     },
 
     async getAssignedSites(userContextId = null) {
@@ -188,13 +189,18 @@ window.assignManager = {
     // The following blocks potentially dangerous requests for privacy that come without a tabId
 
     if(requestInfo.tabId === -1) {
-      return {type: "direct"};
+      return {};
     }
 
     const tab = await browser.tabs.get(requestInfo.tabId);
     const result = await proxifiedContainers.retrieve(tab.cookieStoreId);
     if (!result || !result.proxy) {
-      return {type: "direct"};
+      return {};
+    }
+
+    // proxyDNS only works for SOCKS proxies
+    if (["socks", "socks4"].includes(result.proxy.type)) {
+      result.proxy.proxyDNS = true;
     }
 
     if (!result.proxy.mozProxyEnabled) {
@@ -382,6 +388,12 @@ window.assignManager = {
     return currentContainerState && currentContainerState.isIsolated;
   },
 
+  maybeAddProxyListeners() {
+    if (browser.proxy) {
+      browser.proxy.onRequest.addListener(this.handleProxifiedRequest, {urls: ["<all_urls>"]});
+    }
+  },
+
   init() {
     browser.contextMenus.onClicked.addListener((info, tab) => {
       info.bookmarkId ?
@@ -390,7 +402,7 @@ window.assignManager = {
     });
 
     // Before anything happens we decide if the request should be proxified
-    browser.proxy.onRequest.addListener(this.handleProxifiedRequest, {urls: ["<all_urls>"]});
+    this.maybeAddProxyListeners();
 
     // Before a request is handled by the browser we decide if we should
     // route through a different container

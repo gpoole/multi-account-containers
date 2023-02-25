@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Firefox Multi-Account Containers",
-  "version": "8.0.2",
+  "version": "8.1.1",
   "incognito": "not_allowed",
   "description": "__MSG_extensionDescription__",
   "icons": {
@@ -18,16 +18,16 @@
     "history",
     "idle",
     "management",
-    "nativeMessaging",
     "storage",
     "unlimitedStorage",
     "tabs",
     "webRequestBlocking",
-    "webRequest",
-    "proxy"
+    "webRequest"
   ],
   "optional_permissions": [
-    "bookmarks"
+    "bookmarks",
+    "nativeMessaging",
+    "proxy"
   ],
   "browser_specific_settings": {
     "gecko": {
